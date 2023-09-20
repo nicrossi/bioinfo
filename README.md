@@ -5,6 +5,7 @@ Bioinformatica 2023 2Q
 
 -Python
 -Blast+
+-Muscle
 -Blast+ databse already set up
 
 
