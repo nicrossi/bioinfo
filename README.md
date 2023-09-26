@@ -1,31 +1,33 @@
-# bioinfo
-Bioinformatica 2023 2Q 
+# ITBA BioInformática
+Trabajo Práctico 2023 2Q 
 
 # Requirements
+-Python \
+-Blast+ \
+-Muscle \
+-Blast+ database already set up
 
--Python
--Blast+
--Muscle
--Blast+ databse already set up
-
-
-# fetch_genbank 
-
-Searchs for a gene ID on NCBI-Gene.
-
+# SCRIPTS
+## fetch_genbank
+Fetches the Genbank file from NCBI Gene-Database using the NCBI API 
+<pre>
 [Use]       python fetch_genbank.py GENE-ID
 [Example]   python fetch_genbank.py FBN1
+</pre>
 
-# genbank_to_fasta 
-
-Translate a .gbk to a .fas file 
-
+## genbank_to_fasta
+Translate a Genbank (.gbk) file to a Fasta (.fas) file 
+<pre>
 [Use]       python genbank_to_fasta.py file_to_translate.gbk
-[Example]   python genbank_to_fasta.py gene=FBN1-NM_000138-20230919203303.gbk
+[Example]   python genbank_to_fasta.py FBN1-NM_000138-20230919203303.gbk
+</pre>
 
-# fasta_to_blast_report 
-
-Perfoms a Blast search with a .fas imput file
-
+## fasta_to_blast_report
+Performs a Blast search with a .fas input file
+<pre>
 [Use]       python fasta_to_blast_report.py fasta_file.fas path_to_db
 [Example]   python fasta_to_blast_report.py gene=FBN1-NM_000138-20230919203303.fas ../../ncbi-blast-2.14.1+/data/swissprot
+</pre>
+
+## fasta_popular_alignment
+Performs a Multiple Sequence Alignment (MSA)
