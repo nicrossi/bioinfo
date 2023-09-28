@@ -1,0 +1,10 @@
+El resultado obtenido es un reporte Blast (Basi Local Alignment Search Tool), que es un archivo que muestra la comprarcion de varias secuencias de ADN o proteinas.
+
+Las columnas en este archivo especifico representan lo siguiente:
+
+1- Identificador de secuencia(i) sobre la cual hacemos la busqueda.
+2- Identificador de secuencia(ii) el cual encuentra similitud con la secuencia(i).
+3- Porcentage de similitud entre secuencia(i) y secuencia(ii).
+4- Longitud de alineacion, es el tamaño de la region alineada.
+5- E-value, significancia estadistica de la similitud encontrada.
+6,7,.. - Da informacion extra acerca de los alineamientos, como por ejemplo: posicion de incio y final del alineamiento.

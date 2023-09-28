@@ -32,8 +32,14 @@ def main():
     input_fasta = sys.argv[1]
     out_name = input_fasta.rsplit('.', 1)[0]   
 
-    
-
+'''
+    BASE_URL = "https://www.ncbi.nlm.nih.gov/blast/"
+    query_sequence = ">Query\nAGCTAGCTAGCTAGCTAGCTAGCTAGCT"  # Replace with your query sequence in FASTA format
+    program = "blastn"  # Replace with the appropriate BLAST program
+    database = "nr"  # Replace with the name of the database you want to search
+    evalue_threshold = "1e-10"  # Adjust the E-value threshold as needed
+    blast_url = f"{BASE_URL}blast.cgi?CMD=Put&QUERY={query_sequence}&PROGRAM={program}&DATABASE={database}&EXPECT={evalue_threshold}&FORMAT_TYPE=Text"
+'''
     to_blast(input_fasta, sys.argv[2], out_name)
 
 if __name__ == '__main__':
