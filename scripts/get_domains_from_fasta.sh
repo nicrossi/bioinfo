@@ -1,0 +1,1 @@
+pepstats -sequence $1
