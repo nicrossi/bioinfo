@@ -1,7 +1,7 @@
-import sys
 import json
 from Bio import SeqUtils
 from Bio.Seq import Seq
+from Bio import SeqIO  
 import primer3
 
 def load_design_parameters(config_file):
@@ -10,49 +10,51 @@ def load_design_parameters(config_file):
     return design_params
 
 def calculate_tm(primer_sequence):
-    # Use primer3 to calculate Tm
-    result = primer3.calcTm(primer_sequence)
-    return result.tm
+    result = primer3.calc_tm(primer_sequence)
+    return result
 
 def design_primers(sequence, design_params):
     seq = Seq(sequence)
     primers = []
+    #It should only be 5 primers
+    count = 5 
 
-    min_length = design_params.get('min_length', 18)
-    max_length = design_params.get('max_length', 24)
-    min_gc = design_params.get('min_gc', 50)
-    max_gc = design_params.get('max_gc', 60)
-    max_tm = design_params.get('max_tm', 67)
+    min_length = design_params['min_length']
+    max_length = design_params['max_length']
+    min_gc = design_params['min_gc'] / 100
+    max_gc = design_params['max_gc'] / 100
+    max_tm = design_params['max_tm']
 
     for i in range(len(seq) - min_length + 1):
         for j in range(i + min_length, min(i + max_length, len(seq)) + 1):
             primer = seq[i:j]
 
-            # Calculate GC content
-            gc_content = SeqUtils.GC(primer)
+            gc_content = SeqUtils.gc_fraction(primer)
 
-            # Calculate melting temperature (Tm)
             tm = calculate_tm(str(primer))
 
             # Check if criteria are met
             if min_gc <= gc_content <= max_gc and tm <= max_tm:
                 primers.append(primer)
+                count -= 1
+                if count == 0:
+                    return primers
 
     return primers
 
-def calculate_tm(primer_sequence):
-    # Use primer3 to calculate Tm
-    result = primer3.calcTm_Wallace(primer_sequence)
-    return result.tm
-
-
 if __name__ == '__main__':
-    config_file = 'primer_design_config.json'  
-    sequence = 'gene.fasta' 
+    fasta_file = 'gene.fasta'
+    config_file = 'primer_design_config.json'
+
+    with open(fasta_file, 'r') as seq_file:
+        seq_record = SeqIO.read(seq_file, "fasta")
+        sequence = str(seq_record.seq)
 
     design_params = load_design_parameters(config_file)
+
     designed_primers = design_primers(sequence, design_params)
 
     # Print or save the designed primers
+    print("Designed Primers:")
     for primer in designed_primers:
         print(primer)
