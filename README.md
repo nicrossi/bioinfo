@@ -54,3 +54,10 @@ Calculates domain from a fasta file
 [Use]       ./get_domains_from_fasta.sh gene-to-domain.fasta
 [Example]   ./get_domains_from_fasta.sh huntington-disease.fasta
 </pre>
+
+## fasta_to_primer.py
+Calculate 5 primers based on a fasta file and parameters in a .json file (with fields: "min_length", "max_length", "min_gc", "max_gc", "max_tm")
+<pre>
+[Use]       ./fasta_to_primer.py gene.fasta config.json
+[Example]   ./fasta_to_primer.py FBQ1-NM_0038255.fasta config.json
+</pre>

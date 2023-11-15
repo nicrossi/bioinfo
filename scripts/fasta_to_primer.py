@@ -1,3 +1,4 @@
+import sys
 import json
 from Bio import SeqUtils
 from Bio.Seq import Seq
@@ -43,8 +44,12 @@ def design_primers(sequence, design_params):
     return primers
 
 if __name__ == '__main__':
-    fasta_file = 'gene.fasta'
-    config_file = 'primer_design_config.json'
+    if len(sys.argv) != 3:
+        print("Usage: python script.py <fasta_file> <config_file>")
+        sys.exit(1)
+
+    fasta_file = sys.argv[1]
+    config_file = sys.argv[2]
 
     with open(fasta_file, 'r') as seq_file:
         seq_record = SeqIO.read(seq_file, "fasta")
