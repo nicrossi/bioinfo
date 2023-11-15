@@ -1,6 +1,7 @@
 import sys
 from Bio import SeqIO
-from Bio.Seq import translate
+from Bio.Seq import translate, Seq
+from Bio.SeqUtils import six_frame_translations, nt_search
 
 
 def main():
@@ -19,38 +20,55 @@ def main():
     output_filename = input_filename.replace(".gbk", ".fas")
 
     # Read GenBank and translate to FASTA
-    with open(input_filename, "r") as input_file, open(output_filename, "w") as output_file:
+    with open(input_filename, "r") as input_file, open(
+        output_filename, "w"
+    ) as output_file:
         for record in SeqIO.parse(input_file, "genbank"):
             print(f"Dealing with GenBank record {record.id}")
             seq = record.seq
-            orfs = generate_orfs(seq)
-            for key, value in orfs.items():
-                # Insert a line break every 60 chars (just for a pretty output)
-                seq_trans = '\n'.join(str(value[i:i + 60]) for i in range(0, len(value), 60))
-                output_file.write(f">{record.id} | frame {key}\n{seq_trans}\n")
+            for orf in find_orfs(seq, record.id):
+                output_file.write(f"{orf}\n")
 
     print(f"GenBank to FASTA translation complete, output file: {output_filename}")
 
 
-# Generates the six possible frames translation per one sequence
-def generate_orfs(seq):
-    frames = {'+1': [], '+2': [], '+3': [], '-1': [], '-2': [], '-3': []}
-    seq_rev = seq[::-1]
-    for j in range(0, 3):
-        seq_trans = translate(seq[j::])
-        seq_rev_trans = translate(seq_rev[j::])
-        if j == 0:
-            frames['+1'] = seq_trans
-            frames['-1'] = seq_rev_trans
-        if j == 1:
-            frames['+2'] = seq_trans
-            frames['-2'] = seq_rev_trans
-        if j == 2:
-            frames['+3'] = seq_trans
-            frames['-3'] = seq_rev_trans
+def find_orfs(sequence, record_id):
+    """
+    Find Open Reading Frames (ORFs) in a DNA sequence.
+
+    Parameters:
+    - dna_sequence (sequence, record_id): DNA sequence, Sequence Record id
+
+    Returns:
+    - List of translation of all 6 possible ORFs in fasta format
+    """
+
+    def process_orf(start_pos, frame_sign):
+        orf = sequence[start_pos:].translate(to_stop=True)
+        orf_len = len(orf)
+        if orf_len >= 30:
+            frame = frame_sign * ((abs(start_pos) % 3) + 1)
+            seq_trans = "\n".join(str(orf[i : i + 60]) for i in range(0, len(orf), 60))
+            frames.append(
+                f">{record_id} | Translation ORF {frame:+} | {start_pos}/{start_pos + orf_len} | len {orf_len}\n"
+                + str(seq_trans)
+            )
+
+    start_positions = list(nt_search(str(sequence), "ATG"))
+    start_positions.pop(0)
+    reverse_starts = list(nt_search(str(sequence.reverse_complement()), "ATG"))
+    reverse_starts.pop(0)
+
+    frames = []
+
+    for start_pos in start_positions:
+        process_orf(start_pos, 1)
+
+    for start_pos in reverse_starts:
+        process_orf(start_pos, -1)
 
     return frames
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
