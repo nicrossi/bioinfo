@@ -42,6 +42,10 @@ Performs a Blast search with a .fas input file
 
 ## fasta_popular_alignment
 Performs a Multiple Sequence Alignment (MSA)
+<pre>
+[Use]       python fasta_popular_alignment.py query_sequence_path blast_report.out email path_to_db
+[Example]   python fasta_popular_alignment.py /FBN1-NM_000138.fas blast_results.out example@email.com /ncbi-blast/db/swissprot"
+</pre>
 
 ## get_orfs_and_domains_from_fasta.sh
 Calculate the orfs and domains present in a fasta file

@@ -117,8 +117,8 @@ def main():
         print("---------------------------------------------")
         print("Alignment of top 10 results of a BLAST Report")
         print("-------------------------------------------\n")
-        print("[Use]     python msa.py query_sequence_path blast_report.out email path_to_db")
-        print("[Example] python msa.py /FBN1-NM_000138.fas blast_results.out example@email.com /ncbi-blast/db/swissprot")
+        print("[Use]     python fasta_popular_alignment.py query_sequence_path blast_report.out email path_to_db")
+        print("[Example] python fasta_popular_alignment.py /FBN1-NM_000138.fas blast_results.out example@email.com /ncbi-blast/db/swissprot")
         print("[Output]  Fasta file with the MSA result")
 
         if not sys.argv[2].lower().endswith(".out"):
