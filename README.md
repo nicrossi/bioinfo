@@ -10,18 +10,27 @@ Trabajo Práctico 2023 2Q
 -Emboss 
 
 # SCRIPTS
-## fetch_genbank
-Fetches the Genbank file from NCBI Gene-Database using the NCBI API 
-<pre>
-[Use]       python fetch_genbank.py GENE-ID
-[Example]   python fetch_genbank.py FBN1
-</pre>
 
-## genbank_to_fasta
-Translate a Genbank (.gbk) file to a Fasta (.fas) file 
+## 1. Bash script for full translation into a fasta file
+Fetch genbank file, translate all ORFs and writes result into a FASTA file.
 <pre>
 [Use]       python genbank_to_fasta.py file_to_translate.gbk
 [Example]   python genbank_to_fasta.py FBN1-NM_000138-20230919203303.gbk
+</pre>
+
+### fetch_genbank
+Fetches the Genbank file from NCBI Gene-Database using the NCBI API. Stores the result
+in a .gbk file
+<pre>
+[Use]       python fetch_genbank.py GENE-ID
+[Example]   python fetch_genbank.py FBN1 (output FBN1.gbk)
+</pre>
+
+### genbank_to_fasta
+Translate a Genbank (.gbk) file to a Fasta (.fas) file 
+<pre>
+[Use]       /bin/bash ./seq_genbank_to_orfs_fasta.sh GENE-ID
+[Example]   /bin/bash ./seq_genbank_to_orfs_fasta.sh FBN1
 </pre>
 
 ## fasta_to_blast_report

@@ -1,3 +1,6 @@
+import os
+
+import requests
 from Bio import SeqIO, Entrez
 import subprocess
 import sys
@@ -16,24 +19,10 @@ def get_best_ids(blast_results_file, n=10):
     return top_accession
 
 
-# # Receives a list of fastas ids and performs an alignment
-# def align_fastas(top_ids, db_name, out_name):
-#     # Assuming you want to retrieve the sequences from the BLAST database and align them
-#     blastdbcmd_cmd = f"blastdbcmd -db {db_name} -entry {' '.join(top_ids)} > {out_name}"
-#     subprocess.run(blastdbcmd_cmd, shell=True)
-#
-#     # Perform the multiple sequence alignment using MUSCLE
-#     muscle_cmd = f"muscle -in {out_name} -out {out_name}_aligned.fasta"
-#     subprocess.run(muscle_cmd, shell=True)
-
-
-def fetch_and_concat_sequences(accession_ids, query_seq_fasta, local_db=None):
+def fetch_and_concat_sequences(accession_ids, query_seq, local_db=None):
     data_sequences = []
-    if query_seq_fasta:
-        # Read and store records from the query sequence FASTA file
-        with open(query_seq_fasta, "r") as query_sequence:
-            for record in SeqIO.parse(query_sequence, "fasta"):
-                data_sequences.append(record)
+    if query_seq:
+        data_sequences.append(efetch_nucleotide_fasta(query_seq))
 
     # Fetch and store protein sequences for top results
     for accession_id in accession_ids.keys():
@@ -50,7 +39,6 @@ def fetch_and_concat_sequences(accession_ids, query_seq_fasta, local_db=None):
 
     output_file = "msa_input_sequences.fasta"
     SeqIO.write(data_sequences, output_file, "fasta")
-    print(f"Fasta output file: '{output_file}'.")
     return output_file
 
 
@@ -80,6 +68,14 @@ def perform_msa_muscle(input_fasta, output_msa):
     subprocess.run(cmd, shell=True)
 
 
+# Clean up temporary file
+def clean_tmp_file(tmp_filename):
+    try:
+        os.remove(tmp_filename)
+    except Exception as e:
+        print(f"Error while removing temporary file: {e}")
+
+
 def perform_msa_clustalo(msa_input, msa_output, email):
     clustalo_script = "clustalo.py"
     command = [
@@ -104,6 +100,17 @@ def perform_msa_clustalo(msa_input, msa_output, email):
         print(stderr.decode('utf-8'))
 
 
+def efetch_nucleotide_fasta(accession_id):
+    try:
+        print(f'Entrez.efetch(db="nucleotide", id={accession_id}, rettype="fasta", retmode="text")')
+        handle = Entrez.efetch(db="nucleotide", id=accession_id, rettype="fasta", retmode="text")
+        record = SeqIO.read(handle, "fasta")
+        handle.close()
+        return record
+    except Exception as e:
+        print(f"Error fetching gene with accession_id {accession_id} using Entrez.efetch: {e}")
+
+
 def main():
     if len(sys.argv) < 3 or not sys.argv[2].lower().endswith(".out"):
         print("Invalid arguments")
@@ -124,7 +131,7 @@ def main():
     email = sys.argv[3]
     Entrez.email = email
     db_path = None if len(sys.argv) < 5 else sys.argv[4]
-    msa_output = blast_results_file.rsplit('.', 1)[0] + "_top_MSA.out"
+    msa_output = blast_results_file.rsplit('.', 1)[0] + "_top_MSA"
 
     # Get 10 accession ids for best results
     accession_ids_map = get_best_ids(blast_results_file)
@@ -132,6 +139,8 @@ def main():
     msa_input = fetch_and_concat_sequences(accession_ids_map, query_sequence, None if db_path is None else db_path)
     # perform MSA
     perform_msa_clustalo(msa_input, msa_output, email)
+    print(f"Check results in {msa_output}.out")
+    clean_tmp_file(msa_input)
 
 
 if __name__ == '__main__':

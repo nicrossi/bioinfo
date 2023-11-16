@@ -39,9 +39,9 @@ def fetch_genbank_file(gene, acc_id):
         # Get the current timestamp
         timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         # Save content to local GenBank file
-        with open(f"{gene}-{acc_id}-{timestamp}.gbk", "wb") as genbank_file:
+        with open(f"{gene}.gbk", "wb") as genbank_file:
             genbank_file.write(response.content)
-        print(f"GenBank file downloaded as {gene}-{acc_id}-{timestamp}.gbk")
+        print(f"GenBank file downloaded as {gene}.gbk")
     else:
         print(f"[fetch_genbank_file] HTTP request. Status code: {response.status_code}")
 
