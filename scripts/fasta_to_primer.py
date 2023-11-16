@@ -60,6 +60,7 @@ if __name__ == '__main__':
     designed_primers = design_primers(sequence, design_params)
 
     # Print or save the designed primers
-    print("Designed Primers:")
-    for primer in designed_primers:
-        print(primer)
+    print("Designed Primers in file: primer_out.txt")
+    with open("primer_out.txt", "w") as output_file:
+        for primer in designed_primers:
+            print(primer, file=output_file)
