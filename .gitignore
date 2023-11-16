@@ -1,6 +1,9 @@
 .idea/
 *.gb
-*.gbk
-*.fas
 *.fasta
-*.out
+*.clustal_num
+*.sqr.fa
+*.phylotree.ph
+*.pim
+*.submission.params
+*.tree.dnd
